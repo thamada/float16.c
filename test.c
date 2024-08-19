@@ -61,8 +61,8 @@ void test() {
     float z = KERNEL(x);
     double err_rel = ((double)fabs(z-x)) / ((double)x);
     if (err_rel > err_max) {
-      printf("%016llx: %.8e, %.4e, %e, %e\n", i, x, z, err_rel, err_max);
       err_max = err_rel;
+      printf("%016llx: %.8e, %.4e, %e\n", i, x, z, err_max);
     }
     double wallclocktime_sec = wallclock(t0);
     if(wallclocktime_sec > 10.) break;
