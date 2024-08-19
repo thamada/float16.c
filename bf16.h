@@ -1,3 +1,6 @@
+#if !defined (BF16_H)
+#define BF16_H
+
 // google brain half-precision bfloat16
 typedef struct { uint16_t bits; } degima_bf16_t;
 static degima_bf16_t degima_fp32_to_bf16(float);
@@ -83,3 +86,4 @@ static inline degima_bf16_t degima_fp32_to_bf16(float s) {
     return h;
 }
 
+#endif
