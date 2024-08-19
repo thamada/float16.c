@@ -1,3 +1,6 @@
+#if !defined (FP16_H)
+#define FP16_H
+
 // ieee 754-2008 half-precision float16
 // todo: make this not an integral type
 typedef uint16_t degima_fp16_t;
@@ -124,3 +127,5 @@ static inline degima_fp16_t degima_fp32_to_fp16(float f) {
     const uint32_t nonsign = exp_bits + mantissa_bits;
     return (sign >> 16) | (shl1_w > UINT32_C(0xFF000000) ? UINT16_C(0x7E00) : nonsign);
 }
+
+#endif
