@@ -40,16 +40,16 @@ int main(int argc, char *argv[]) {
   off_t nbytes = sizeof(uint16_t);
 
   for (off_t i = 0; i < sb.st_size; i += nbytes) {
-    union { float f; uint32_t i; } u;
-    u.i = 0;
+    uint16_t bits16 = 0;
     for (off_t ic = 0; ic < nbytes;  ic++) {
       uint32_t bits8 = 0xFF & ((uint32_t)file_in_memory[i + ic]);
-      u.i = u.i | (bits8 << (ic*8)); // little endian
+      bits16 = bits16 | (bits8 << (ic*8)); // little endian
     }
-    u.i = u.i << 16; // bfloat16 format
+    union { float f; uint32_t i; } u;
+    u.i = ((uint32_t)bits16) << 16; // bfloat16 format
     char* space = " ";
     if (u.f < 0.0) space = "";
-    printf("%08llX, %04X, %s%e\n", i/nbytes, u.i, space, u.f);
+    printf("%08llX, %04X, %s%e\n", i/nbytes, bits16, space, u.f);
   }
 
   // メモリマッピングを解除
