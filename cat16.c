@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  // ファイルの内容をポインタを使って読み出し
+  // ファイルの内容をポインタを使って(2バイトごとに)読み出し
   for (off_t i = 0; i < sb.st_size; i += 2) {
     uint16_t bits8_L = 0xFF & ((uint32_t)file_in_memory[i+0]);
     uint16_t bits8_H = 0xFF & ((uint32_t)file_in_memory[i+1]);
