@@ -39,33 +39,15 @@ int main(int argc, char *argv[]) {
   }
 
   // ファイルの内容をポインタを使って読み出し
-  off_t nbytes = sizeof(uint16_t);
+  for (off_t i = 0; i < sb.st_size; i += 2) {
+    uint16_t bits8_L = 0xFF & ((uint32_t)file_in_memory[i+0]);
+    uint16_t bits8_H = 0xFF & ((uint32_t)file_in_memory[i+1]);
+    uint16_t bits16 = 0xFFFF & ((bits8_H << 8) | bits8_L); // little endian
 
-  /**
-  for (off_t i = 0; i < sb.st_size; i += nbytes) {
-    uint16_t bits16 = 0;
-    for (off_t ic = 0; ic < nbytes;  ic++) {
-      uint32_t bits8 = 0xFF & ((uint32_t)file_in_memory[i + ic]);
-      bits16 = bits16 | (bits8 << (ic*8)); // little endian
-    }
-    union { float f; uint32_t i; } u;
-    u.i = ((uint32_t)bits16) << 16; // bfloat16 format
-    char* space = " ";
-    if (u.f < 0.0) space = "";
-    printf("%08llX, %04X, %s%e\n", i/nbytes, bits16, space, u.f);
-  }
-  */
-
-  for (off_t i = 0; i < sb.st_size; i += nbytes) {
-    uint16_t bits16 = 0;
-    for (off_t ic = 0; ic < nbytes;  ic++) {
-      uint32_t bits8 = 0xFF & ((uint32_t)file_in_memory[i + ic]);
-      bits16 = bits16 | (bits8 << (ic*8)); // little endian
-    }
     float x_fp32 = BF16_to_FP32(UINT16_to_BF16((uint16_t)bits16));
     char* space = " ";
     if (x_fp32 < 0.0) space = "";
-    printf("%08llX, %04X, %s%e\n", i/nbytes, bits16, space, x_fp32);
+    printf("%08llX, %04X, %s%e\n", i/2, bits16, space, x_fp32);
   }
 
 
