@@ -13,6 +13,7 @@ static void          degima_fp32_to_bf16_row(const float *, degima_bf16_t *, int
 
 #define FP32_to_BF16(x) degima_fp32_to_bf16(x)
 #define BF16_to_FP32(x) degima_bf16_to_fp32(x)
+#define UINT16_to_BF16(x) degima_uint16_to_bf16(x)
 
 /**
  * Converts brain16 to float32.
@@ -83,6 +84,13 @@ static inline degima_bf16_t degima_fp32_to_bf16(float s) {
         return h;
     }
     h.bits = (u.i + (0x7fff + ((u.i >> 16) & 1))) >> 16;
+    return h;
+}
+
+static inline degima_bf16_t degima_uint16_to_bf16(uint16_t x)
+{
+    degima_bf16_t h;
+    h.bits = (uint16_t) (0xFFFF & x);
     return h;
 }
 

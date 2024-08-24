@@ -7,6 +7,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "bf16.h"
+
 int main(int argc, char *argv[]) {
   if (argc < 2) {
     fprintf(stderr, "Usage: %s <file>\n", argv[0]);
@@ -39,6 +41,7 @@ int main(int argc, char *argv[]) {
   // ファイルの内容をポインタを使って読み出し
   off_t nbytes = sizeof(uint16_t);
 
+  /**
   for (off_t i = 0; i < sb.st_size; i += nbytes) {
     uint16_t bits16 = 0;
     for (off_t ic = 0; ic < nbytes;  ic++) {
@@ -51,6 +54,20 @@ int main(int argc, char *argv[]) {
     if (u.f < 0.0) space = "";
     printf("%08llX, %04X, %s%e\n", i/nbytes, bits16, space, u.f);
   }
+  */
+
+  for (off_t i = 0; i < sb.st_size; i += nbytes) {
+    uint16_t bits16 = 0;
+    for (off_t ic = 0; ic < nbytes;  ic++) {
+      uint32_t bits8 = 0xFF & ((uint32_t)file_in_memory[i + ic]);
+      bits16 = bits16 | (bits8 << (ic*8)); // little endian
+    }
+    float x_fp32 = BF16_to_FP32(UINT16_to_BF16((uint16_t)bits16));
+    char* space = " ";
+    if (x_fp32 < 0.0) space = "";
+    printf("%08llX, %04X, %s%e\n", i/nbytes, bits16, space, x_fp32);
+  }
+
 
   // メモリマッピングを解除
   if (munmap(file_in_memory, sb.st_size) == -1) {
